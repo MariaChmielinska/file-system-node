@@ -1,112 +1,49 @@
 const fs = require('fs');
 const path = require('path');
-let dni = "";
+let dni = "76543210D";
 
 /** Leer README */
-//Iteracion 1
-const fs = require('fs');
 
-// Leer el archivo JSON
-fs.readFile('hacienda.json', 'utf8', (err, data) => {
-    if (err) {
-        console.error('Error al leer el archivo:', err);
-        return;
-    }
+async function taxNotifications() {
+    // leer el fichero "en crudo" (un string sin formato)
+    const fileContent = await fs.promises.readFile("./hacienda.json", "utf-8");
 
-    // Parsear el contenido del archivo JSON
-    const jsonData = JSON.parse(data);
+    // utilizamos el método JSON.parse, para transformar el string en un tipo de dato que podamos manejar mejor (que puedas recorrerlo, hacer búsquedas estructuradas, etc) con JavaScript
+    const jsonContent = JSON.parse(fileContent);
 
-    // Mostrar todo el contenido del JSON
-    console.log(jsonData);
-});
+    console.log(jsonContent);
 
-//Iteracion 2
-const fs = require('fs');
+    /**
+     * Bucle for... un bucle while... y otros métodos más avanzados que veremos el lunes
+     */
 
-// Leer el archivo JSON
-fs.readFile('hacienda.json', 'utf8', (err, data) => {
-    if (err) {
-        console.error('Error al leer el archivo:', err);
-        return;
-    }
+    let defaulterFound = false; // nos indicará si hemos encontrado al infractor o no
+    let i = 0; // variable de iteración. Nos va a permitir iterar por cada uno de los elementos del array
 
-    // Parsear el contenido del archivo JSON
-    const jsonData = JSON.parse(data);
+    /**
+     * Mientras no hayamos encontrado al defraudador y no hayamos llegado al final del array
+     *   - Para cada persona tenemos que comprobar dos cosas: si encontramos el dni que estamos buscando Y si dicha persona tiene notificaciones pendientes (persona.dni == dni && persona.notificacionesPendientes) 
+     */
+    while (!defaulterFound && i < jsonContent.length) {
+        // en nextPerson tengo el ojbeto actual sonre el cual estamos iterando
+        const nextPerson = jsonContent[i];
+        defaulterFound = nextPerson.dni == dni && nextPerson.notificacionesPendientes;
 
-    // Recorrer el array y mostrar solo los nombres
-    jsonData.forEach(persona => {
-        console.log(persona.nombre);
-    });
-});
-
-
-//iteracion 3
-
-
-const fs = require('fs');
-
-// Cambia este valor a un DNI que exista o no en el archivo JSON
-const dniABuscar = '12345678A';
-
-// Leer el archivo JSON
-fs.readFile('hacienda.json', 'utf8', (err, data) => {
-    if (err) {
-        console.error('Error al leer el archivo:', err);
-        return;
-    }
-
-    // Parsear el contenido del archivo JSON
-    const jsonData = JSON.parse(data);
-
-    // Buscar la persona por DNI
-    const persona = jsonData.find(p => p.dni === dniABuscar);
-
-    if (persona) {
-        if (persona.notificaciones) {
-            console.log(`La persona con DNI ${dniABuscar} tiene notificaciones pendientes con hacienda.`);
-        } else {
-            console.log(`La persona con DNI ${dniABuscar} no tiene notificaciones pendientes con hacienda.`);
+        if (defaulterFound) {
+            // escribir el mensaje indicado de la iteración 4.
         }
-    } else {
-        console.log(`No se encontró una persona con el DNI ${dniABuscar}.`);
-    }
-});
 
-const fs = require('fs');
-
-// Cambia este valor a un DNI que exista o no en el archivo JSON
-const dniABuscar = '12345678A';
-
-// Leer el archivo JSON
-fs.readFile('hacienda.json', 'utf8', (err, data) => {
-    if (err) {
-        console.error('Error al leer el archivo:', err);
-        return;
+        i++;
     }
 
-    // Parsear el contenido del archivo JSON
-    const jsonData = JSON.parse(data);
+    /**
+     * Cuando salgamos del bucle while, ¿qué variable de las que hemos declarado nos va a indicar si hemos contrado al defraudador? defaulterFound
+     * 
+     * Si defaulterFound es cierto, tenemos que escribir en el fichero la información que nos pide el ejercicio
+     */
 
-    // Buscar la persona por DNI
-    const persona = jsonData.find(p => p.dni === dniABuscar);
-    let mensaje;
 
-    if (persona) {
-        if (persona.notificaciones) {
-            mensaje = `La persona con DNI ${dniABuscar} tiene notificaciones pendientes con hacienda.`;
-        } else {
-            mensaje = `La persona con DNI ${dniABuscar} no tiene notificaciones pendientes con hacienda.`;
-        }
-    } else {
-        mensaje = `No se encontró una persona con el DNI ${dniABuscar}.`;
-    }
+}
 
-    console.log(mensaje);
+taxNotifications();
 
-    // Guardar el mensaje en el archivo de texto
-    fs.appendFile('notificaciones.txt', mensaje + '\n', (err) => {
-        if (err) {
-            console.error('Error al escribir en el archivo:', err);
-        }
-    });
-});
