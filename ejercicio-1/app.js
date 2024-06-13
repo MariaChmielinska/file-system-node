@@ -1,17 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-let dni = "76543210D";
 
 /** Leer README */
 
-async function taxNotifications() {
+async function taxNotifications(dni) {
     // leer el fichero "en crudo" (un string sin formato)
     const fileContent = await fs.promises.readFile("./hacienda.json", "utf-8");
 
     // utilizamos el método JSON.parse, para transformar el string en un tipo de dato que podamos manejar mejor (que puedas recorrerlo, hacer búsquedas estructuradas, etc) con JavaScript
     const jsonContent = JSON.parse(fileContent);
-
-    console.log(jsonContent);
 
     /**
      * Bucle for... un bucle while... y otros métodos más avanzados que veremos el lunes
@@ -27,10 +24,13 @@ async function taxNotifications() {
     while (!defaulterFound && i < jsonContent.length) {
         // en nextPerson tengo el ojbeto actual sonre el cual estamos iterando
         const nextPerson = jsonContent[i];
+        console.log("🚀 ~ file: app.js:28 ~ taxNotifications ~ nextPerson:", nextPerson.nombre)
         defaulterFound = nextPerson.dni == dni && nextPerson.notificacionesPendientes;
 
         if (defaulterFound) {
-            // escribir el mensaje indicado de la iteración 4.
+            // escribir el mensaje indicado de la iteración 3.
+            const message = `El/La contribuyente ${nextPerson.nombre} se enviará un email a ${nextPerson.email}\n`;
+            await fs.promises.appendFile("notificaciones.txt", message);
         }
 
         i++;
@@ -45,5 +45,4 @@ async function taxNotifications() {
 
 }
 
-taxNotifications();
-
+taxNotifications("12345678A");
